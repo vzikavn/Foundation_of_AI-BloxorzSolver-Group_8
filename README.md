@@ -1,1 +1,1 @@
-# Foundation-of-AI---HCMUS-2026---Project-1
+# Foundation-of-AI-HCMUS-2026-Project-1
