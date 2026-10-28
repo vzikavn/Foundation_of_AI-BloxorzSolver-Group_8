@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 from state import GameState, Action
 from board import Board, TileType
 import heapq
+from collections import deque
 
 
 # Chuỗi bước đi mẫu cho 3 màn chơi mặc định để kiểm thử hệ thống Animation/Replay trên GUI
@@ -49,10 +50,21 @@ def solve_bfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     expanded_nodes = 0
     solution_actions: List[str] = []
 
-    # =========================================================================
-    # TODO: Cài đặt thuật toán BFS của bạn tại đây
-    # Hiện tại trả về bước đi mẫu để bạn kiểm thử trực tiếp Animation trên GUI
-    # =========================================================================
+    visited = {initial_state}
+    queue = deque([(initial_state, [])])  
+
+    while queue:
+        state, path = queue.popleft()
+        expanded_nodes += 1
+
+        if board.is_goal(state):
+            solution_actions = path
+            break
+
+        for action, next_state in board.get_valid_moves(state):
+            if next_state not in visited:
+                visited.add(next_state)
+                queue.append((next_state, path + [action]))
     solution_actions = _get_demo_moves_if_at_start(board, initial_state)
 
     elapsed_time = time.perf_counter() - start_time
@@ -79,9 +91,23 @@ def solve_dfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     expanded_nodes = 0
     solution_actions: List[str] = []
 
-    # =========================================================================
-    # TODO: Cài đặt thuật toán DFS / IDS của bạn tại đây
-    # =========================================================================
+    visited = set()
+    stack = [(initial_state, [])]          
+
+    while stack:
+        state, path = stack.pop()
+        if state in visited:
+            continue
+        visited.add(state)
+        expanded_nodes += 1
+
+        if board.is_goal(state):
+            solution_actions = path
+            break
+
+        for action, next_state in board.get_valid_moves(state):
+            if next_state not in visited:
+                stack.append((next_state, path + [action]))
     solution_actions = _get_demo_moves_if_at_start(board, initial_state)
 
     elapsed_time = time.perf_counter() - start_time
