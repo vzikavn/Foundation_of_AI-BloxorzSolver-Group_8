@@ -65,7 +65,6 @@ def solve_bfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
             if next_state not in visited:
                 visited.add(next_state)
                 queue.append((next_state, path + [action]))
-    solution_actions = _get_demo_moves_if_at_start(board, initial_state)
 
     elapsed_time = time.perf_counter() - start_time
     _, peak_mem = tracemalloc.get_traced_memory()
@@ -108,7 +107,6 @@ def solve_dfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
         for action, next_state in board.get_valid_moves(state):
             if next_state not in visited:
                 stack.append((next_state, path + [action]))
-    solution_actions = _get_demo_moves_if_at_start(board, initial_state)
 
     elapsed_time = time.perf_counter() - start_time
     _, peak_mem = tracemalloc.get_traced_memory()
@@ -165,7 +163,7 @@ def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     # =========================================================================
     start = board.get_initial_state()
     pq = [(0.0, 0, start, [])] # (cost, tiebreaker, state, path)
-    visited = {} # {state: best_cost}
+    visited = {start: 0.0} # {state: best_cost}
     tiebreaker = 0
 
     while pq:
@@ -180,8 +178,6 @@ def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
             solution_actions = path
             break
 
-        visited[current_state] = current_cost
-
         for action, next_state in board.get_valid_moves(current_state):
             step_cost = get_step_cost(board, action = action, next_state = next_state)
             new_cost = step_cost + current_cost
@@ -192,7 +188,6 @@ def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
                 heapq.heappush(pq, (new_cost, tiebreaker, next_state, path + [action]))   
 
     # =========================================================================
-    # solution_actions = _get_demo_moves_if_at_start(board, initial_state)
 
     elapsed_time = time.perf_counter() - start_time
     _, peak_mem = tracemalloc.get_traced_memory()
