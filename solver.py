@@ -203,6 +203,18 @@ def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     }
 
 
+def heuristic(state: GameState, goal: tuple[int, int]) -> float:
+    """
+    Hàm Heuristic tính khoảng cách Manhattan từ khối đến ô đích.
+    Nếu khối đang nằm hoặc bị tách, lấy khoảng cách nhỏ nhất từ các phần của khối đến đích.
+    """
+    cells = state.get_occupied_cells()
+    min_manhattan = min(abs(r - goal[0]) + abs(c - goal[1]) for r, c in cells)
+    
+    # Nhân với 0.25 để đảm bảo tính Admissible (h(n) <= h*(n)) 
+    # vì bước đi nhỏ nhất có thể tốn 0.5 (công tắc) nhưng lại di chuyển được khoảng cách 2 ô.
+    return min_manhattan * 0.25
+
 def solve_astar(board: Board, initial_state: GameState) -> Dict[str, Any]:
     """
     Hàm khung cho thuật toán A* Search.
@@ -216,7 +228,44 @@ def solve_astar(board: Board, initial_state: GameState) -> Dict[str, Any]:
     # =========================================================================
     # TODO: Cài đặt thuật toán A* và hàm Heuristic của bạn tại đây
     # =========================================================================
-    solution_actions = _get_demo_moves_if_at_start(board, initial_state)
+    
+    # Hàng đợi ưu tiên PQ lưu các tuple: (f_cost, tiebreaker, g_cost, state, path)
+    # tiebreaker giúp tránh lỗi so sánh 2 GameState khi f_cost bằng nhau
+    
+    tiebreaker = 0
+    start_h = heuristic(initial_state, board.goal)
+    pq = [(start_h, tiebreaker, 0.0, initial_state, [])]
+    
+    # Từ điển visited lưu chi phí g(n) tốt nhất đã tìm thấy để đi đến state đó
+    visited: Dict[GameState, float] = {initial_state: 0.0}
+
+    while pq:
+        current_f, _, current_g, current_state, path = heapq.heappop(pq)
+
+        # Pruning (cắt tỉa): Nếu trạng thái này đã được duyệt với chi phí g rẻ hơn trước đó, bỏ qua
+        if current_g > visited.get(current_state, float('inf')):
+            continue
+
+        expanded_nodes += 1
+
+        # Nếu đạt trạng thái đích -> Dừng và ghi nhận kết quả
+        if board.is_goal(current_state):
+            solution_actions = path
+            break
+
+        # Khai triển các bước đi hợp lệ
+        for action, next_state in board.get_valid_moves(current_state):
+            # Tính g(n) mới bằng g_hiện_tại + cost của bước đi
+            step_cost = get_step_cost(board, action=action, next_state=next_state)
+            new_g = current_g + step_cost
+
+            # Cập nhật nếu tìm được đường đi mới rẻ hơn hoặc chưa từng ghé thăm
+            if next_state not in visited or new_g < visited[next_state]:
+                visited[next_state] = new_g
+                new_f = new_g + heuristic(next_state, board.goal)
+                
+                tiebreaker += 1
+                heapq.heappush(pq, (new_f, tiebreaker, new_g, next_state, path + [action]))
 
     elapsed_time = time.perf_counter() - start_time
     _, peak_mem = tracemalloc.get_traced_memory()
