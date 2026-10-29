@@ -8,32 +8,6 @@ import heapq
 from collections import deque
 
 
-# Chuỗi bước đi mẫu cho 3 màn chơi mặc định để kiểm thử hệ thống Animation/Replay trên GUI
-DEMO_SOLUTIONS: Dict[str, List[str]] = {
-    "Level 1 - Classic Basics": [
-        Action.RIGHT, Action.DOWN, Action.RIGHT, Action.RIGHT,
-        Action.DOWN, Action.DOWN, Action.RIGHT
-    ],
-    "Level 2 - Fragile & Switches": [
-        Action.RIGHT, Action.RIGHT, Action.RIGHT, Action.RIGHT,
-        Action.DOWN, Action.DOWN
-    ],
-    "Level 3 - Split & Merge Master": [
-        Action.RIGHT, Action.RIGHT, Action.RIGHT, Action.DOWN,
-        Action.DOWN, Action.SPACE, Action.RIGHT, Action.UP,
-        Action.DOWN, Action.RIGHT, Action.UP, Action.RIGHT,
-        Action.DOWN, Action.RIGHT
-    ]
-}
-
-
-def _get_demo_moves_if_at_start(board: Board, initial_state: GameState) -> List[str]:
-    """Trả về chuỗi bước đi mẫu nếu khối đang ở vị trí xuất phát của 3 màn mẫu."""
-    if initial_state == board.get_initial_state():
-        return list(DEMO_SOLUTIONS.get(board.name, []))
-    return []
-
-
 def solve_bfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     """
     Hàm khung cho thuật toán Breadth-First Search (BFS).
