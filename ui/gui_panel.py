@@ -8,11 +8,9 @@ from ui.gui_config import COLORS
 
 class ControlPanel:
     """
-    Quản lý bảng điều khiển bên phải (Sidebar):
-    - Danh sách cuộn chọn màn chơi (hiển thị trực tiếp toàn bộ level trong thư mục levels/).
-    - Nút Restart / Undo.
-    - Các nút chạy thuật toán AI Solver (BFS, DFS, UCS, A*).
-    - Bảng thống kê kết quả thực thi và chuỗi bước giải.
+    Bảng điều khiển bên phải theo phong cách Phiến Đá Cổ Điển (Ancient Carved Slate):
+    - Danh sách cuộn chọn màn chơi viền đồng cổ.
+    - Các nút điều khiển và AI Solver phẳng mờ (Matte Stone) sáng lên sắc vàng kim khi di chuột.
     """
 
     def __init__(
@@ -23,6 +21,7 @@ class ControlPanel:
         on_restart: Callable[[], None],
         on_undo: Callable[[], None],
         on_run_solver: Callable[[str], None],
+        **_kwargs: Any,
     ) -> None:
         self.root = root
         self.on_select_level = on_select_level
@@ -30,7 +29,15 @@ class ControlPanel:
         self.on_undo = on_undo
         self.on_run_solver = on_run_solver
 
-        self.frame = tk.Frame(parent, bg=COLORS["bg_panel"], width=310, padx=12, pady=12)
+        self.frame = tk.Frame(
+            parent,
+            bg=COLORS["bg_panel"],
+            width=315,
+            padx=12,
+            pady=12,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
+        )
         self.frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(10, 0))
         self.frame.pack_propagate(False)
 
@@ -41,29 +48,47 @@ class ControlPanel:
 
     @staticmethod
     def build_legend_bar(parent: tk.Widget) -> None:
-        legend_frame = tk.Frame(parent, bg=COLORS["bg_panel"], padx=10, pady=7)
+        legend_frame = tk.Frame(
+            parent,
+            bg=COLORS["bg_panel"],
+            padx=10,
+            pady=7,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
+        )
         legend_frame.pack(fill=tk.X, pady=(8, 0))
         legend_text = (
-            "Chú thích 2.5D:  [Đá xám] Sàn thường  |  [Cam đất] Gạch mỏng (Fragile)  |  "
-            "[Xanh lam] Cầu (Bridge)  |  [Đĩa tròn] Soft Switch  |  "
-            "[Chữ X] Heavy Switch  |  [Vòng ( )] Split Switch  |  [Hố sâu] Ô Đích (Goal)"
+            "Chú giải Đền Cổ:  [Đá vôi] Sàn thường  |  [Đất nung nứt] Fragile  |  "
+            "[Ván cổ ngữ] Cầu  |  [Đĩa đồng] Soft  |  "
+            "[Đe chữ X] Heavy  |  [Bệ ( )] Split  |  [Giếng thờ] Đích"
         )
         tk.Label(
             legend_frame,
             text=legend_text,
             font=("Segoe UI", 9),
             bg=COLORS["bg_panel"],
-            fg="#E5E7EB",
+            fg=COLORS["fg_text"],
         ).pack()
+
+    @staticmethod
+    def _bind_stone_button_hover(
+        btn: tk.Button,
+        normal_bg: str,
+        normal_fg: str,
+        hover_bg: str = "#383028",
+        hover_fg: str = "#F3C677",
+    ) -> None:
+        btn.bind("<Enter>", lambda _e: btn.config(bg=hover_bg, fg=hover_fg))
+        btn.bind("<Leave>", lambda _e: btn.config(bg=normal_bg, fg=normal_fg))
 
     def _build_level_selector(self) -> None:
         tk.Label(
             self.frame,
-            text="DANH SÁCH MÀN CHƠI",
-            font=("Segoe UI", 10, "bold"),
+            text="❖  DANH SÁCH MÀN CHƠI",
+            font=("Georgia", 10, "bold"),
             bg=COLORS["bg_panel"],
-            fg="#FBBF24",
-        ).pack(anchor="w", pady=(0, 4))
+            fg=COLORS["gold_accent"],
+        ).pack(anchor="w", pady=(0, 5))
 
         selector_container = tk.Frame(
             self.frame,
@@ -76,7 +101,7 @@ class ControlPanel:
         self.level_list_canvas = tk.Canvas(
             selector_container,
             bg=COLORS["menu_bg"],
-            height=220,
+            height=215,
             highlightthickness=0,
             bd=0,
         )
@@ -110,66 +135,79 @@ class ControlPanel:
 
         btn_restart = tk.Button(
             ctrl_row,
-            text="🔄 Restart (R)",
+            text="↻  Restart (R)",
             font=("Segoe UI", 9, "bold"),
-            bg="#B45309",
-            fg="white",
-            activebackground="#D97706",
+            bg="#4A331E",
+            fg=COLORS["fg_text"],
+            activebackground="#634428",
             activeforeground="white",
             relief=tk.FLAT,
-            pady=5,
+            bd=0,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
+            pady=6,
             cursor="hand2",
             command=self.on_restart,
         )
-        btn_restart.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
+        btn_restart.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 4))
+        self._bind_stone_button_hover(btn_restart, "#4A331E", COLORS["fg_text"], "#5E4126")
 
         btn_undo = tk.Button(
             ctrl_row,
-            text="↩ Undo (Z)",
+            text="↩  Undo (Z)",
             font=("Segoe UI", 9, "bold"),
-            bg="#374151",
-            fg="white",
-            activebackground="#4B5563",
+            bg="#2A2520",
+            fg=COLORS["fg_text"],
+            activebackground="#3D352E",
             activeforeground="white",
             relief=tk.FLAT,
-            pady=5,
+            bd=0,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
+            pady=6,
             cursor="hand2",
             command=self.on_undo,
         )
-        btn_undo.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(3, 0))
+        btn_undo.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(4, 0))
+        self._bind_stone_button_hover(btn_undo, "#2A2520", COLORS["fg_text"], "#3B332C")
 
-        tk.Frame(self.frame, bg="#333333", height=1).pack(fill=tk.X, pady=6)
+        tk.Frame(self.frame, bg=COLORS["menu_border"], height=1).pack(fill=tk.X, pady=7)
 
     def _build_solver_buttons(self) -> None:
         tk.Label(
             self.frame,
-            text="AI SOLVERS",
-            font=("Segoe UI", 10, "bold"),
+            text="❖  THUẬT TOÁN TÌM KIẾM AI",
+            font=("Georgia", 10, "bold"),
             bg=COLORS["bg_panel"],
-            fg="#FBBF24",
-        ).pack(anchor="w", pady=(0, 4))
+            fg=COLORS["gold_accent"],
+        ).pack(anchor="w", pady=(0, 5))
 
         solvers_grid = tk.Frame(self.frame, bg=COLORS["bg_panel"])
         solvers_grid.pack(fill=tk.X)
 
         solvers_cfg = [
-            ("▶ Solve BFS", "BFS", "#15803D", 0, 0),
-            ("▶ Solve DFS", "DFS", "#1D4ED8", 0, 1),
-            ("▶ Solve UCS", "UCS", "#6D28D9", 1, 0),
-            ("▶ Solve A*", "ASTAR", "#BE185D", 1, 1),
+            ("▶  Solve BFS", "BFS", 0, 0),
+            ("▶  Solve DFS", "DFS", 0, 1),
+            ("▶  Solve UCS", "UCS", 1, 0),
+            ("▶  Solve A*", "ASTAR", 1, 1),
         ]
         solvers_grid.columnconfigure(0, weight=1)
         solvers_grid.columnconfigure(1, weight=1)
 
-        for label, alg_code, color, r_idx, c_idx in solvers_cfg:
+        for label, alg_code, r_idx, c_idx in solvers_cfg:
             btn = tk.Button(
                 solvers_grid,
                 text=label,
                 font=("Segoe UI", 9, "bold"),
-                bg=color,
-                fg="white",
+                bg="#25201B",
+                fg=COLORS["fg_text"],
+                activebackground=COLORS["gold_accent"],
+                activeforeground="#14110E",
                 relief=tk.FLAT,
-                pady=5,
+                bd=0,
+                highlightthickness=1,
+                highlightbackground=COLORS["menu_border"],
+                pady=6,
                 cursor="hand2",
                 command=lambda code=alg_code: self.on_run_solver(code),
             )
@@ -177,33 +215,36 @@ class ControlPanel:
                 row=r_idx,
                 column=c_idx,
                 sticky="ew",
-                padx=(0 if c_idx == 0 else 3, 3 if c_idx == 0 else 0),
-                pady=2,
+                padx=(0 if c_idx == 0 else 4, 4 if c_idx == 0 else 0),
+                pady=3,
             )
+            self._bind_stone_button_hover(btn, "#25201B", COLORS["fg_text"])
 
-        tk.Frame(self.frame, bg="#333333", height=1).pack(fill=tk.X, pady=8)
+        tk.Frame(self.frame, bg=COLORS["menu_border"], height=1).pack(fill=tk.X, pady=8)
 
     def _build_metrics_section(self) -> None:
         tk.Label(
             self.frame,
-            text="THỐNG KÊ SOLVER",
-            font=("Segoe UI", 9, "bold"),
+            text="❖  THỐNG KÊ SOLVER",
+            font=("Georgia", 9, "bold"),
             bg=COLORS["bg_panel"],
-            fg="#FBBF24",
+            fg=COLORS["gold_accent"],
         ).pack(anchor="w")
 
         self.lbl_metrics = tk.Label(
             self.frame,
             text="Thuật toán: -\nThời gian:  -\nBộ nhớ đỉnh: -\nNút mở rộng: -\nSố bước giải: -",
             font=("Consolas", 9),
-            bg="#111111",
-            fg="#E5E7EB",
+            bg="#120F0D",
+            fg=COLORS["fg_text"],
             justify=tk.LEFT,
             anchor="nw",
             padx=8,
-            pady=5,
+            pady=6,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
         )
-        self.lbl_metrics.pack(fill=tk.X, pady=(3, 6))
+        self.lbl_metrics.pack(fill=tk.X, pady=(4, 7))
 
         tk.Label(
             self.frame,
@@ -217,15 +258,17 @@ class ControlPanel:
             self.frame,
             height=4,
             font=("Consolas", 9),
-            bg="#111111",
-            fg="#38BDF8",
+            bg="#120F0D",
+            fg=COLORS["gold_accent"],
             wrap=tk.WORD,
             relief=tk.FLAT,
             padx=6,
-            pady=4,
+            pady=5,
+            highlightthickness=1,
+            highlightbackground=COLORS["menu_border"],
             state=tk.DISABLED,
         )
-        self.txt_solution.pack(fill=tk.BOTH, expand=True, pady=(2, 4))
+        self.txt_solution.pack(fill=tk.BOTH, expand=True, pady=(3, 4))
 
     def _on_mousewheel(self, event: tk.Event) -> None:
         widget = self.root.winfo_containing(event.x_root, event.y_root)
@@ -260,10 +303,10 @@ class ControlPanel:
             title = level_titles.get(path, os.path.basename(path))
 
             bg_col = COLORS["menu_active_bg"] if is_current else COLORS["menu_bg"]
-            fg_col = "#FFFFFF" if is_current else "#E5E7EB"
-            icon_txt = "▶" if is_current else "•"
-            icon_col = "#60A5FA" if is_current else "#6B7280"
-            font_style = ("Segoe UI", 10, "bold") if is_current else ("Segoe UI", 10)
+            fg_col = COLORS["gold_accent"] if is_current else COLORS["fg_text"]
+            icon_txt = "❖" if is_current else "•"
+            icon_col = COLORS["gold_accent"] if is_current else COLORS["fg_sub"]
+            font_style = ("Segoe UI", 9, "bold") if is_current else ("Segoe UI", 9)
 
             row_frame = tk.Frame(
                 self.level_items_frame,
