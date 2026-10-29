@@ -176,7 +176,7 @@ class ControlPanel:
     def _build_solver_buttons(self) -> None:
         tk.Label(
             self.frame,
-            text="❖  THUẬT TOÁN TÌM KIẾM AI",
+            text="❖  THUẬT TOÁN TÌM KIẾM",
             font=("Georgia", 10, "bold"),
             bg=COLORS["bg_panel"],
             fg=COLORS["gold_accent"],
@@ -225,7 +225,7 @@ class ControlPanel:
     def _build_metrics_section(self) -> None:
         tk.Label(
             self.frame,
-            text="❖  THỐNG KÊ SOLVER",
+            text="❖  THỐNG KÊ LẦN CHẠY",
             font=("Georgia", 9, "bold"),
             bg=COLORS["bg_panel"],
             fg=COLORS["gold_accent"],
@@ -248,7 +248,7 @@ class ControlPanel:
 
         tk.Label(
             self.frame,
-            text="Chuỗi bước đi (Solution Path):",
+            text="Chuỗi bước đi:",
             font=("Segoe UI", 8, "bold"),
             bg=COLORS["bg_panel"],
             fg=COLORS["fg_sub"],
@@ -376,8 +376,8 @@ class ControlPanel:
             text=(
                 f"Thuật toán: {result.get('algorithm', alg_code)}\n"
                 f"Thời gian:  {result.get('time_sec', 0.0) * 1000:.2f} ms\n"
-                f"Bộ nhớ đỉnh: {result.get('memory_kb', 0.0):.2f} KB\n"
-                f"Nút mở rộng: {result.get('expanded_nodes', 0)}\n"
+                f"Bộ nhớ đã sử dụng: {result.get('memory_kb', 0.0):.2f} KB\n"
+                f"Số node mở rộng: {result.get('expanded_nodes', 0)}\n"
                 f"Số bước giải: {actions_len}"
             )
         )
