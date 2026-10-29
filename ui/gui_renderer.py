@@ -359,13 +359,13 @@ class BloxorzRenderer:
 
         # 5. Thanh trạng thái dưới đáy
         if game_status == "WIN":
-            status_txt = "★ STAGE COMPLETED! KHỐI ĐÃ LỌT QUA BỆ THỜ ĐÍCH! ★"
+            status_txt = "HOÀN THÀNH MÀN CHƠI"
             status_col = "#84CC16"
         elif game_status == "LOST" or (anim_state and anim_state["phase"] == "FALL"):
             status_txt = f"✖ {loss_reason} (Nhấn Z để Undo hoặc R để Restart)"
             status_col = "#F87171"
         elif is_animating:
-            status_txt = "▶ Đang phát lại lời giải của AI Solver..."
+            status_txt = f"▶ Đang phát lại lời giải của thuật toán"
             status_col = "#68B8AD"
         elif state.orientation == Orientation.SPLIT:
             status_txt = (
