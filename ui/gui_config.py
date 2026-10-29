@@ -8,7 +8,7 @@ Point3D = Tuple[float, float, float]
 VEC_C: Point2D = (46.0, -10.5)
 VEC_R: Point2D = (16.0, 28.0)
 VEC_Z: Point2D = (0.0, -40.0)
-TILE_THICKNESS: float = 0.22
+TILE_THICKNESS: float = 0.24
 
 # Vector hướng nhìn của Camera trong hệ trục (r, c, z) dùng cho Painter's Algorithm
 CAM_VEC: Point3D = (46.0, -16.0, 36.4)
@@ -20,50 +20,76 @@ SINK_FRAMES: int = 14
 FALL_FRAMES: int = 18
 DEFAULT_REPLAY_SPEED_MS: int = 250
 
-# Bảng màu giao diện và vật liệu 3D
+# Bảng màu Texture Đá Cổ Điển & Đồng Cổ (Ancient Stone & Bronze Ruins)
 COLORS: Dict[str, str] = {
-    "bg_root": "#141414",
-    "bg_panel": "#1B1B1B",
-    "menu_bg": "#202020",
-    "menu_header": "#181818",
-    "menu_active_bg": "#2B2B2B",
-    "menu_hover_bg": "#383838",
-    "menu_border": "#333333",
-    "fg_text": "#F1F5F9",
-    "fg_sub": "#9CA3AF",
-    # Màu gạch sàn thường
-    "floor_top": "#D6D9DF",
-    "floor_left": "#737A86",
-    "floor_front": "#98A0AC",
-    "floor_border": "#4A505A",
-    # Màu gạch mỏng dễ vỡ (Fragile)
-    "fragile_top": "#F97316",
-    "fragile_left": "#9A3412",
-    "fragile_front": "#C2410C",
-    "fragile_inner": "#FFEDD5",
-    # Màu cầu (Bridge)
-    "bridge_top": "#38BDF8",
-    "bridge_left": "#0369A1",
-    "bridge_front": "#0284C7",
-    # Màu lỗ đích 3D (Goal Hole)
-    "goal_void": "#0F0402",
-    "goal_wall_back": "#3F444E",
-    "goal_wall_right": "#525864",
-    # Màu công tắc (Switches)
-    "sw_soft_fill": "#94A3B8",
-    "sw_soft_rim": "#1E293B",
-    "sw_split_fill": "#A855F7",
-    # Màu khối Bloxorz (Đồng gỉ sét)
-    "block_top": "#8C4A27",
-    "block_left": "#432212",
-    "block_front": "#68351B",
-    "block_bottom": "#2A140A",
-    "block_rust_light": "#B86538",
-    "block_rust_dark": "#2E160B",
-    "block_border": "#1F0E06",
-    # Màu khối đơn khi tách (SPLIT)
-    "active_top": "#D97706",
-    "active_left": "#78350F",
-    "active_front": "#B45309",
-    "active_border": "#FEF08A",
+    # Màu nền UI & Bảng điều khiển bằng đá khắc
+    "bg_root": "#0E0C0A",
+    "bg_panel": "#181512",
+    "menu_bg": "#211D19",
+    "menu_header": "#14110E",
+    "menu_active_bg": "#362F28",
+    "menu_hover_bg": "#2C2620",
+    "menu_border": "#4A4036",
+    "gold_accent": "#D4A359",
+    "fg_text": "#EAE0C8",
+    "fg_sub": "#A39682",
+    # Gạch sàn thường: Đá vôi phong hóa (Weathered Limestone)
+    "floor_top": "#A69B8D",
+    "floor_bevel": "#94897B",
+    "floor_patch": "#83786B",
+    "floor_moss": "#78806A",
+    "floor_left": "#595247",
+    "floor_front": "#756C5E",
+    "floor_border": "#2A2520",
+    "floor_highlight": "#C2B8A8",
+    "floor_crack": "#3D352E",
+    # Gạch mỏng dễ vỡ (Fragile): Đất nung cổ rạn nứt (Cracked Terracotta)
+    "fragile_top": "#B85D43",
+    "fragile_inner": "#9E4730",
+    "fragile_left": "#632819",
+    "fragile_front": "#823824",
+    "fragile_border": "#33130B",
+    "fragile_crack": "#240B05",
+    "fragile_highlight": "#D98268",
+    # Cầu cổ đại (Bridge): Ván gỗ lim & Khung đồng ngọc bích
+    "bridge_top": "#6E5239",
+    "bridge_plank": "#856548",
+    "bridge_left": "#3D2B1C",
+    "bridge_front": "#523B27",
+    "bridge_rail": "#467A73",
+    "bridge_rune": "#68B8AD",
+    "bridge_closed_bracket": "#5C5044",
+    "bridge_closed_rune": "#9E523B",
+    # Lỗ đích 3D (Ancient Altar Abyss)
+    "goal_void": "#050403",
+    "goal_rim": "#8C8070",
+    "goal_wall_back": "#2E2822",
+    "goal_wall_right": "#423A31",
+    "goal_rune": "#E0AD5A",
+    # Công tắc cổ đại (Ancient Switches)
+    "sw_socket": "#26211C",
+    "sw_soft_fill": "#A88454",
+    "sw_soft_inner": "#7D5E36",
+    "sw_soft_rim": "#2B1F11",
+    "sw_heavy_top": "#7A8288",
+    "sw_heavy_side": "#454B50",
+    "sw_split_base": "#3B0764",
+    "sw_split_fill": "#9333EA",
+    "sw_split_glow": "#581C87",
+    # Khối Bloxorz: Cột đá bọc đồng cổ (Ancient Bronze Monolith)
+    "block_top": "#8C5832",
+    "block_left": "#422713",
+    "block_front": "#633C1F",
+    "block_bottom": "#241308",
+    "block_panel": "#704423",
+    "block_rust_light": "#B5794A",
+    "block_rust_dark": "#331C0C",
+    "block_patina": "#4E6E5D",
+    "block_border": "#1C0F06",
+    # Khối đơn khi tách (SPLIT - Khối Vàng Hổ Phách Cổ Ngữ)
+    "active_top": "#C98A32",
+    "active_left": "#6E4611",
+    "active_front": "#9E681E",
+    "active_panel": "#AD7322",
+    "active_border": "#F5D08A",
 }
