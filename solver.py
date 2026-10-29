@@ -45,7 +45,7 @@ def solve_bfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     tracemalloc.stop()
 
     return {
-        "algorithm": "BFS (Demo Stub)",
+        "algorithm": "BFS",
         "actions": solution_actions,
         "time_sec": elapsed_time,
         "memory_kb": peak_mem / 1024.0,
@@ -87,13 +87,14 @@ def solve_dfs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     tracemalloc.stop()
 
     return {
-        "algorithm": "DFS (Demo Stub)",
+        "algorithm": "DFS",
         "actions": solution_actions,
         "time_sec": elapsed_time,
         "memory_kb": peak_mem / 1024.0,
         "expanded_nodes": expanded_nodes,
         "solution_length": len(solution_actions)
     }
+
 
 def get_step_cost(board: Board, action: Action, next_state: GameState) -> float:
     '''
@@ -103,17 +104,20 @@ def get_step_cost(board: Board, action: Action, next_state: GameState) -> float:
     SWITCH: 0.5
 
     *Switch control after spliting: 0.2
+    *Each step after splitting takes x1.5 cost to encourage merging
     '''
+    # return 1
     if action == Action.SPACE:
         return 0.2
 
     next_cell = next_state.get_occupied_cells()
-
     if not next_state.is_split():
+    # if True:
         is_fragile = any(board.get_tile(r, c) == TileType.FRAGILE for r, c in next_cell)
         if is_fragile:
             return 2.5
-
+    
+    split_penalty = 1.5 if next_state.is_split() else 1
     is_switch = any(board.get_tile(r, c) in (
             TileType.SOFT_SWITCH,
             TileType.HEAVY_SWITCH,
@@ -121,9 +125,9 @@ def get_step_cost(board: Board, action: Action, next_state: GameState) -> float:
         )
         for r, c in next_cell)
     if is_switch:
-        return 0.5
+        return 0.5 * split_penalty
 
-    return 1.0 # The rest
+    return 1.0 * split_penalty # The rest
 
 def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     """
@@ -169,7 +173,7 @@ def solve_ucs(board: Board, initial_state: GameState) -> Dict[str, Any]:
     tracemalloc.stop()
 
     return {
-        "algorithm": "UCS (Demo Stub)",
+        "algorithm": "UCS",
         "actions": solution_actions,
         "time_sec": elapsed_time,
         "memory_kb": peak_mem / 1024.0,
@@ -247,7 +251,7 @@ def solve_astar(board: Board, initial_state: GameState) -> Dict[str, Any]:
     tracemalloc.stop()
 
     return {
-        "algorithm": "A* (Demo Stub)",
+        "algorithm": "A*",
         "actions": solution_actions,
         "time_sec": elapsed_time,
         "memory_kb": peak_mem / 1024.0,
