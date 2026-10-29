@@ -109,9 +109,10 @@ def get_step_cost(board: Board, action: Action, next_state: GameState) -> float:
 
     next_cell = next_state.get_occupied_cells()
 
-    is_fragile = any(board.get_tile(r, c) == TileType.FRAGILE for r, c in next_cell)
-    if is_fragile:
-        return 2.5
+    if not next_state.is_split():
+        is_fragile = any(board.get_tile(r, c) == TileType.FRAGILE for r, c in next_cell)
+        if is_fragile:
+            return 2.5
 
     is_switch = any(board.get_tile(r, c) in (
             TileType.SOFT_SWITCH,
