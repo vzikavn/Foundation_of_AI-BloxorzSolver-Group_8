@@ -29,7 +29,7 @@ class BloxorzGUI:
 
     def __init__(self, root: tk.Tk, level_paths: List[str], levels_dir: str = "levels") -> None:
         self.root = root
-        self.root.title("Bloxorz 2.5D - AI Solver Framework")
+        self.root.title("Bloxorz and Solver")
         self.root.geometry("1160x700")
         self.root.minsize(980, 620)
         self.root.configure(bg=COLORS["bg_root"])
@@ -347,7 +347,7 @@ class BloxorzGUI:
                 self.failed_cells = (raw_pos1, raw_pos2) if raw_pos2 else (raw_pos1,)
 
             if status == "FRAGILE":
-                self.loss_reason = "THUA! Gạch mỏng (Fragile) bị vỡ khi đứng thẳng!"
+                self.loss_reason = "THUA! Gạch mỏng bị vỡ khi đứng thẳng!"
                 self.broken_fragile_cell = raw_pos1
             else:
                 self.loss_reason = "THUA! Khối đã lăn rơi khỏi platform!"
