@@ -111,3 +111,6 @@ class GameState:
             if b_pos == cell:
                 return is_open
         return False
+
+    def is_split(self) -> bool:
+        return self.orientation == Orientation.SPLIT
